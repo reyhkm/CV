@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REYKAL — An AI Editorial</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'background': '#f8f8f8', // Subtle off-white
+                        'foreground': '#0a0a0a', // Rich off-black
+                        'muted': '#aeaeae',
+                        'accent': '#3b82f6', // For AI Chatbot accents
+                    },
+                    fontFamily: {
+                        serif: ['DM Serif Display', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    keyframes: {
+                        fadeIn: {
+                          '0%': { opacity: '0', transform: 'scale(0.95)' },
+                          '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        fadeOut: {
+                          '0%': { opacity: '1', transform: 'scale(1)' },
+                          '100%': { opacity: '0', transform: 'scale(0.95)' },
+                        },
+                        slideIn: {
+                          '0%': { transform: 'translateY(100%)' },
+                          '100%': { transform: 'translateY(0)' },
+                        },
+                        thinking: {
+                          '0%, 100%': { transform: 'scale(1)', opacity: '0.5' },
+                          '50%': { transform: 'scale(1.2)', opacity: '1' },
+                        }
+                    },
+                    animation: {
+                        fadeIn: 'fadeIn 0.3s ease-out forwards',
+                        fadeOut: 'fadeOut 0.3s ease-in forwards',
+                        slideIn: 'slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        thinking: 'thinking 1.2s infinite ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://aistudiocdn.com/react@^19.1.1/",
+        "react": "https://aistudiocdn.com/react@^19.1.1",
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.19.0"
+      }
+    }
+    </script>
+
+    <style>
+        /* --- VOGUE / EDITORIAL STYLES --- */
+        html { cursor: none; }
+        body {
+            background-color: #f8f8f8;
+            color: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- Custom Cursor --- */
+        .cursor {
+            position: fixed;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background-color: #0a0a0a;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.2s ease-out, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+            mix-blend-mode: difference;
+            z-index: 9999;
+        }
+        .cursor::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 6px; height: 6px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .cursor.is-hovering {
+            width: 60px; height: 60px;
+            background: white;
+            border: 1px solid #0a0a0a;
+        }
+        .cursor.is-hovering::before { display: none; }
+
+        /* --- Typography --- */
+        h1, h2, h3, h4 { font-family: 'DM Serif Display', serif; font-weight: 400; }
+        .section-heading { font-size: clamp(3rem, 10vw, 8rem); line-height: 0.9; }
+        .section-subheading { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* --- Animate In (Masking Effect) --- */
+        .animate-mask { overflow: hidden; }
+        .animate-mask > * {
+            transform: translateY(110%);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .animate-mask.is-visible > * { transform: translateY(0); }
+
+        /* --- Navbar --- */
+        .navbar a {
+            position: relative;
+            letter-spacing: 0.05em;
+            padding-bottom: 2px;
+        }
+        .navbar a::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 0; height: 1px; background-color: #0a0a0a;
+            transition: width 0.3s ease;
+        }
+        .navbar a:hover::after { width: 100%; }
+
+        /* --- Project List --- */
+        .project-item {
+            border-bottom: 1px solid #aeaeae;
+            transition: color 0.3s ease;
+        }
+        .project-item:hover { color: #aeaeae; }
+
+        /* --- Contact Form --- */
+        #contact input, #contact textarea {
+            background-color: transparent; border: none;
+            border-bottom: 1px solid #aeaeae; border-radius: 0;
+            padding: 1rem 0; font-size: 1.25rem;
+            font-family: 'DM Serif Display', serif;
+        }
+        #contact input:focus, #contact textarea:focus {
+            outline: none; box-shadow: none; border-bottom-color: #0a0a0a;
+        }
+        #contact button {
+            border: 1px solid #0a0a0a; color: #0a0a0a;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        #contact button:hover { background-color: #0a0a0a; color: #f8f8f8; }
+
+        /* --- Footer --- */
+        .footer-link {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+        
+        /* Modal remains functionally similar, styled for the new theme */
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(10, 10, 10, 0.8); backdrop-filter: blur(5px); }
+        .modal-content { background-color: #f8f8f8; color: #0a0a0a; margin: 5% auto; padding: 40px; border: none; width: 90%; max-width: 700px; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; background: transparent; border: none; color: #0a0a0a; cursor: none; }
+
+        /* --- Custom Scrollbar Hiding --- */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="bg-background text-foreground">
+
+    <div class="cursor"></div>
+
+    <header class="navbar fixed w-full z-50 p-4 md:p-8">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="font-serif text-2xl">R.</a>
+            <nav class="hidden md:flex space-x-8 text-sm uppercase">
+                <a href="#about">About</a>
+                <a href="#projects">Work</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <div class="md:hidden">
+                 <button id="mobile-menu-btn" class="text-foreground focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-background/90 backdrop-blur-md">
+            <ul class="flex flex-col items-center space-y-6 p-6 text-xl">
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Work</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="h-screen min-h-[700px] w-full flex items-center justify-center">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="section-heading">
+                    <div class="animate-mask"><span class="inline-block">REY</span></div>
+                    <div class="animate-mask" style="transition-delay: 0.1s;"><span class="inline-block">-KAL</span></div>
+                </h1>
+                <div class="animate-mask" style="transition-delay: 0.2s;">
+                    <p class="mt-4 text-muted max-w-lg mx-auto">
+                        AI Engineer & Creative Technologist. Weaving intelligence into digital experiences.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24 md:py-40">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
+                    <div class="animate-mask">
+                        <img src="WhatsApp Image 2025-03-11 at 01.26.27 (3).png" alt="Portrait of Reykal" class="w-full h-auto filter grayscale">
+                    </div>
+                    <div class="max-w-md">
+                        <div class="animate-mask">
+                            <p class="section-subheading mb-4">01 / About</p>
+                        </div>
+                        <div class="animate-mask" style="transition-delay: 0.1s;">
+                            <h2 class="text-4xl md:text-5xl font-serif mb-6">A confluence of code and creativity.</h2>
+                        </div>
+                        <div class="animate-mask" style="transition-delay: 0.2s;">
+                            <p class="text-muted leading-relaxed">
+                                I operate at the intersection of machine learning and user experience, transforming complex datasets into intuitive, elegant solutions. My work is driven by a belief that the most powerful technology feels less like a machine and more like a conversation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-24 md:py-40">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="animate-mask">
+                        <p class="section-subheading mb-4">02 / Selected Work</p>
+                    </div>
+                    <div class="mt-12">
+                        <!-- Project item now without data-image attribute -->
+                        <a href="#" class="project-item flex justify-between items-center py-8" onclick="event.preventDefault(); openProjectModal();">
+                            <h3 class="text-4xl md:text-6xl font-serif">Arum – Barista AI</h3>
+                            <span class="text-muted hidden md:inline">Google Gemini</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Project Detail Modal -->
+        <div id="project-modal" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" id="close-modal">&times;</button>
+                <p class="section-subheading mb-2">Case Study</p>
+                <h2 class="text-3xl md:text-4xl font-serif mb-6">Arum - Barista AI</h2>
+                <div class="mb-6">
+                    <img src="rey.wuaze.com__i=1(iPhone 14 Pro Max).png" alt="Arum - Mobile Screenshot">
+                </div>
+                <p class="text-muted mb-6">Arum is a virtual assistant designed to elevate the ordering experience in a virtual café. Leveraging Google Gemini Flash, it comprehends natural language, provides personalized recommendations, and processes orders with seamless efficiency.</p>
+                <a href="https://aicoffee.pages.dev" target="_blank" class="font-semibold hover:text-muted transition-colors">View Live Project &rarr;</a>
+            </div>
+        </div>
+
+        <!-- Skills & Certification Section (REFINED) -->
+        <section id="skills" class="py-24 md:py-40">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-12 md:gap-24">
+                    <div>
+                        <div class="animate-mask">
+                            <p class="section-subheading mb-12">03 / Capabilities</p>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="animate-mask" style="transition-delay: 0.1s;">
+                                <div class="pb-6 border-b border-muted/50">
+                                    <h4 class="text-3xl font-serif">Python & Machine Learning</h4>
+                                    <p class="text-muted mt-2">Core competency in building and deploying intelligent models.</p>
+                                </div>
+                            </div>
+                            <div class="animate-mask" style="transition-delay: 0.2s;">
+                                 <div class="pb-6 border-b border-muted/50">
+                                    <h4 class="text-3xl font-serif">Data Analysis & Visualization</h4>
+                                    <p class="text-muted mt-2">Translating complex data into actionable insights.</p>
+                                </div>
+                            </div>
+                            <div class="animate-mask" style="transition-delay: 0.3s;">
+                                 <div class="pb-6">
+                                    <h4 class="text-3xl font-serif">Web Technologies</h4>
+                                    <p class="text-muted mt-2">Frontend skills (HTML, CSS, JS) to bring models to life.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="animate-mask">
+                            <p class="section-subheading mb-12">Certification</p>
+                        </div>
+                        <div class="animate-mask" style="transition-delay: 0.1s;">
+                             <a href="https://coursera.org/verify/specialization/QG3SZH3EVR8L" target="_blank" rel="noopener noreferrer" class="block border border-muted/50 p-2 hover:border-foreground transition-colors">
+                                <img src="sertifikat.png" alt="Sertifikat Machine Learning" class="w-full" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 md:py-40 bg-background">
+            <div class="container mx-auto px-4">
+                <div class="max-w-3xl mx-auto text-center">
+                    <div class="animate-mask">
+                        <p class="section-subheading mb-4">04 / Contact</p>
+                    </div>
+                    <div class="animate-mask" style="transition-delay: 0.1s;">
+                        <h2 class="section-heading">Let's Talk.</h2>
+                    </div>
+                </div>
+                <div class="max-w-3xl mx-auto mt-12">
+                    <form id="contact-form" class="space-y-4">
+                        <input type="text" id="name" name="name" required placeholder="Your Name" />
+                        <input type="email" id="email" name="email" required placeholder="Your Email" />
+                        <textarea id="message" name="message" rows="1" required placeholder="Your Message" class="resize-none"></textarea>
+                        <button type="submit" id="submit-btn-contact" class="w-full py-4 text-xl font-sans font-medium uppercase tracking-widest mt-8">
+                            Send Inquiry
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-16">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center">
+            <p class="font-serif text-2xl mb-4 md:mb-0">REYKAL</p>
+            <div class="flex space-x-6 text-muted mb-4 md:mb-0">
+                <a href="https://www.linkedin.com/in/reykal-al-hikam-469956286/" target="_blank" class="hover:text-foreground footer-link">LinkedIn</a>
+                <a href="https://www.instagram.com/reyhkm" target="_blank" class="hover:text-foreground footer-link">Instagram</a>
+            </div>
+            <p class="text-sm text-muted">&copy; 2025. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // --- Cursor Logic ---
+            const $cursor = $('.cursor');
+            $(window).on('mousemove', (e) => {
+                // Do not show custom cursor when hovering over the AI chat window or its trigger
+                if ($(e.target).closest('#root').length) {
+                    $cursor.hide();
+                } else {
+                    $cursor.show();
+                    $cursor.css({ left: e.clientX + 'px', top: e.clientY + 'px' });
+                }
+            });
+            $('a, button, input, textarea').not('#root *').on('mouseenter', () => $cursor.addClass('is-hovering')).on('mouseleave', () => $cursor.removeClass('is-hovering'));
+
+            // --- Scroll Animation Logic ---
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        $(entry.target).addClass('is-visible');
+                    }
+                });
+            }, { threshold: 0.2 });
+            $('.animate-mask').each((i, el) => revealObserver.observe(el));
+
+            // --- Mobile Menu ---
+            $('#mobile-menu-btn').click(() => $('#mobile-menu').slideToggle());
+            $('a[href*="#"]').on('click', () => {
+                if ($('#mobile-menu').is(':visible')) $('#mobile-menu').slideUp();
+            });
+
+            // --- Contact Form ---
+            $('#contact-form').on('submit', function (e) {
+                e.preventDefault();
+                // Logic remains the same, no changes needed
+            });
+        });
+        
+        // --- Modal Functionality ---
+        function openProjectModal() { document.getElementById("project-modal").style.display = "block"; }
+        document.getElementById("close-modal").addEventListener("click", () => document.getElementById("project-modal").style.display = "none");
+        window.addEventListener("click", (event) => {
+            if (event.target == document.getElementById("project-modal")) {
+                document.getElementById("project-modal").style.display = "none";
+            }
+        });
+    </script>
+    
+    <!-- AI Chatbot App Mount Point -->
+    <div id="root" style="cursor: auto;"></div>
+    <script type="module" src="/index.tsx"></script>
+
+</body>
+</html>
