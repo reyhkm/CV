@@ -18,6 +18,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -93,6 +94,7 @@
             font-weight: 300;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* --- Custom Cursor --- */
@@ -103,7 +105,7 @@
             background-color: #0a0a0a;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: transform 0.2s ease-out, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+            transition: transform 0.2s ease-out, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease, background-color 0.3s ease;
             mix-blend-mode: difference;
             z-index: 9999;
         }
@@ -115,6 +117,7 @@
             background: white;
             border-radius: 50%;
             transform: translate(-50%, -50%);
+            transition: background-color 0.3s ease;
         }
         .cursor.is-hovering {
             width: 60px; height: 60px;
@@ -145,14 +148,14 @@
         .navbar a::after {
             content: ''; position: absolute; bottom: 0; left: 0;
             width: 0; height: 1px; background-color: #0a0a0a;
-            transition: width 0.3s ease;
+            transition: width 0.3s ease, background-color 0.3s ease;
         }
         .navbar a:hover::after { width: 100%; }
 
         /* --- Project List --- */
         .project-item {
             border-bottom: 1px solid #aeaeae;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, border-color 0.3s ease;
         }
         .project-item:hover { color: #aeaeae; }
 
@@ -164,13 +167,14 @@
             font-family: 'DM Serif Display', serif;
             width: 100%;
             line-height: 1.5;
+            transition: border-color 0.3s ease;
         }
         #contact input:focus, #contact textarea:focus {
             outline: none; box-shadow: none; border-bottom-color: #0a0a0a;
         }
         #contact button {
             border: 1px solid #0a0a0a; color: #0a0a0a;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
         #contact button:hover:not(:disabled) { background-color: #0a0a0a; color: #f8f8f8; }
         #contact button:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -184,8 +188,8 @@
         
         /* Modal remains functionally similar, styled for the new theme */
         .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(10, 10, 10, 0.8); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #f8f8f8; color: #0a0a0a; margin: 5% auto; padding: 40px; border: none; width: 90%; max-width: 700px; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; background: transparent; border: none; color: #0a0a0a; cursor: none; }
+        .modal-content { background-color: #f8f8f8; color: #0a0a0a; margin: 5% auto; padding: 40px; border: none; width: 90%; max-width: 700px; transition: background-color 0.3s ease, color 0.3s ease; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; background: transparent; border: none; color: #0a0a0a; cursor: none; transition: color 0.3s ease; }
 
         /* --- Custom Scrollbar Hiding --- */
         .no-scrollbar::-webkit-scrollbar {
@@ -204,7 +208,7 @@
             font-size: 0.9rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Slightly refined shadow */
             transform: translateX(120%);
-            transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out, background-color 0.3s ease, color 0.3s ease;
             opacity: 0;
         }
         .notification.is-visible {
@@ -219,6 +223,58 @@
             background-color: #b91c1c; /* A deeper, more sophisticated red */
             color: #f8f8f8;
         }
+        
+        /* --- DARK MODE STYLES --- */
+        html.dark body {
+            background-color: #0a0a0a;
+            color: #f8f8f8;
+        }
+        html.dark .cursor {
+            background-color: #f8f8f8;
+        }
+        html.dark .cursor::before { background: #0a0a0a; }
+        html.dark .cursor.is-hovering {
+            background: #0a0a0a;
+            border: 1px solid #f8f8f8;
+        }
+        html.dark .navbar a::after { background-color: #f8f8f8; }
+        html.dark #theme-toggle { color: #f8f8f8; }
+        html.dark .project-item { border-bottom-color: #555; }
+        html.dark .project-item:hover { color: #555; }
+        html.dark #contact input, html.dark #contact textarea {
+            border-bottom-color: #555;
+            color: #f8f8f8;
+        }
+        html.dark #contact input::placeholder,
+        html.dark #contact textarea::placeholder {
+            color: #aeaeae;
+        }
+        html.dark #contact input:focus, html.dark #contact textarea:focus {
+            border-bottom-color: #f8f8f8;
+        }
+        html.dark #contact button {
+            border-color: #f8f8f8; color: #f8f8f8;
+        }
+        html.dark #contact button:hover:not(:disabled) {
+            background-color: #f8f8f8; color: #0a0a0a;
+        }
+        html.dark .modal-content {
+            background-color: #1a1a1a;
+            color: #f8f8f8;
+        }
+        html.dark .modal-close { color: #f8f8f8; }
+        html.dark .notification.success {
+            background-color: #f8f8f8;
+            color: #0a0a0a;
+        }
+        html.dark .notification.error {
+            background-color: #ef4444; /* Brighter red for dark bg */
+            color: #f8f8f8;
+        }
+        html.dark img.filter.grayscale {
+            filter: grayscale(100%) brightness(0.8);
+        }
+
     </style>
 </head>
 
@@ -229,18 +285,24 @@
     <header class="navbar fixed w-full z-50 p-4 md:p-8">
         <div class="container mx-auto flex justify-between items-center">
             <a href="#" class="font-serif text-2xl">R.</a>
-            <nav class="hidden md:flex space-x-8 text-sm uppercase">
-                <a href="#about">About</a>
-                <a href="#projects">Work</a>
-                <a href="#contact">Contact</a>
-            </nav>
-            <div class="md:hidden">
-                 <button id="mobile-menu-btn" class="text-foreground focus:outline-none">
-                    <i class="fas fa-bars text-2xl"></i>
+             <div class="flex items-center space-x-4">
+                <nav class="hidden md:flex space-x-8 text-sm uppercase">
+                    <a href="#about">About</a>
+                    <a href="#projects">Work</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+                 <button id="theme-toggle" type="button" class="p-2 rounded-full text-foreground hover:bg-muted/20 transition-colors focus:outline-none" aria-label="Toggle theme">
+                    <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                 </button>
+                <div class="md:hidden">
+                     <button id="mobile-menu-btn" class="text-foreground dark:text-background focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
             </div>
         </div>
-        <div id="mobile-menu" class="md:hidden hidden bg-background/90 backdrop-blur-md">
+        <div id="mobile-menu" class="md:hidden hidden bg-background/90 dark:bg-foreground/90 backdrop-blur-md">
             <ul class="flex flex-col items-center space-y-6 p-6 text-xl">
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Work</a></li>
@@ -331,13 +393,13 @@
                         </div>
                         <div class="space-y-6">
                             <div class="animate-mask" style="transition-delay: 0.1s;">
-                                <div class="pb-6 border-b border-muted/50">
+                                <div class="pb-6 border-b border-muted/50 dark:border-gray-700">
                                     <h4 class="text-3xl font-serif">Python & Machine Learning</h4>
                                     <p class="text-muted mt-2">Core competency in building and deploying intelligent models.</p>
                                 </div>
                             </div>
                             <div class="animate-mask" style="transition-delay: 0.2s;">
-                                 <div class="pb-6 border-b border-muted/50">
+                                 <div class="pb-6 border-b border-muted/50 dark:border-gray-700">
                                     <h4 class="text-3xl font-serif">Data Analysis & Visualization</h4>
                                     <p class="text-muted mt-2">Translating complex data into actionable insights.</p>
                                 </div>
@@ -355,7 +417,7 @@
                             <p class="section-subheading mb-12">Certification</p>
                         </div>
                         <div class="animate-mask" style="transition-delay: 0.1s;">
-                             <a href="https://coursera.org/verify/specialization/QG3SZH3EVR8L" target="_blank" rel="noopener noreferrer" class="block border border-muted/50 p-2 hover:border-foreground transition-colors">
+                             <a href="https://coursera.org/verify/specialization/QG3SZH3EVR8L" target="_blank" rel="noopener noreferrer" class="block border border-muted/50 dark:border-gray-700 p-2 hover:border-foreground dark:hover:border-background transition-colors">
                                 <img src="sertifikat.png" alt="Sertifikat Machine Learning" class="w-full" loading="lazy" decoding="async" />
                             </a>
                         </div>
@@ -365,7 +427,7 @@
         </section>
 
         <!-- Contact Section -->
-        <section id="contact" class="py-24 md:py-40 bg-background">
+        <section id="contact" class="py-24 md:py-40 bg-background dark:bg-foreground">
             <div class="container mx-auto px-4">
                 <div class="max-w-3xl mx-auto text-center">
                     <div class="animate-mask">
@@ -405,6 +467,39 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
+        // --- Theme Toggling ---
+        (function() {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    darkIcon.classList.remove('hidden');
+                    lightIcon.classList.add('hidden');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    darkIcon.classList.add('hidden');
+                    lightIcon.classList.remove('hidden');
+                    localStorage.setItem('theme', 'light');
+                }
+            };
+
+            themeToggleBtn.addEventListener('click', () => {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                applyTheme(isDarkMode ? 'light' : 'dark');
+            });
+
+            // Set initial theme on page load
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+            applyTheme(initialTheme);
+        })();
+
+
         // --- Notification Functionality ---
         function showNotification(message, type) {
             const container = $('#notification-container');
