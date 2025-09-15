@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -158,7 +159,9 @@
             border: 1px solid #0a0a0a; color: #0a0a0a;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-        #contact button:hover { background-color: #0a0a0a; color: #f8f8f8; }
+        #contact button:hover:not(:disabled) { background-color: #0a0a0a; color: #f8f8f8; }
+        #contact button:disabled { opacity: 0.5; cursor: not-allowed; }
+
 
         /* --- Footer --- */
         .footer-link {
@@ -178,6 +181,30 @@
         .no-scrollbar {
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
+        }
+
+        /* --- Notification Styles --- */
+        .notification {
+            padding: 1rem 1.5rem;
+            border-radius: 0; /* Sharper, more editorial style */
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Slightly refined shadow */
+            transform: translateX(120%);
+            transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            opacity: 0;
+        }
+        .notification.is-visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .notification.success {
+            background-color: #0a0a0a; /* On-theme foreground color */
+            color: #f8f8f8; /* On-theme background color */
+        }
+        .notification.error {
+            background-color: #b91c1c; /* A deeper, more sophisticated red */
+            color: #f8f8f8;
         }
     </style>
 </head>
@@ -341,7 +368,7 @@
                         <input type="email" id="email" name="email" required placeholder="Your Email" />
                         <textarea id="message" name="message" rows="1" required placeholder="Your Message" class="resize-none"></textarea>
                         <button type="submit" id="submit-btn-contact" class="w-full py-4 text-xl font-sans font-medium uppercase tracking-widest mt-8">
-                            Send Inquiry
+                            Kirim Pesan
                         </button>
                     </form>
                 </div>
@@ -360,16 +387,40 @@
         </div>
     </footer>
 
+    <!-- Notification Container -->
+    <div id="notification-container" class="fixed top-5 right-5 z-[10001] space-y-2"></div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
+        // --- Notification Functionality ---
+        function showNotification(message, type) {
+            const container = $('#notification-container');
+            const notif = $('<div/>')
+                .addClass('notification')
+                .addClass(type) // 'success' or 'error'
+                .text(message);
+            
+            container.append(notif);
+
+            // Trigger fade in and slide in animation
+            setTimeout(() => {
+                notif.addClass('is-visible');
+            }, 10); 
+
+            // Set timeout to remove the notification
+            setTimeout(() => {
+                notif.removeClass('is-visible');
+                // Remove from DOM after transition ends
+                notif.on('transitionend', () => notif.remove());
+            }, 5000);
+        }
+
         $(document).ready(function () {
             // --- Optimized Cursor Logic ---
             const $cursor = $('.cursor');
             let mouse = { x: -100, y: -100 }; // Start off-screen
-            let isMoving = false;
 
             $(window).on('mousemove', (e) => {
-                // Do not show custom cursor when hovering over the AI chat window or its trigger
                 if ($(e.target).closest('#root').length) {
                     $cursor.hide();
                 } else {
@@ -403,10 +454,35 @@
                 if ($('#mobile-menu').is(':visible')) $('#mobile-menu').slideUp();
             });
 
-            // --- Contact Form ---
+            // --- Contact Form Submission ---
             $('#contact-form').on('submit', function (e) {
                 e.preventDefault();
-                // Logic remains the same, no changes needed
+                var formData = {
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    message: $('#message').val()
+                };
+                var scriptURL = 'https://script.google.com/macros/s/AKfycbwOnpojIrcb8FSlxQcswDYuRqTQ1qMGfyBZEsL72OCf9Bh23MF0d9Hex4PoF7WRAC_0/exec';
+                
+                $('#submit-btn-contact').prop('disabled', true).text('Mengirim...');
+
+                fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                .then(() => {
+                    showNotification('Pesan berhasil dikirim!', 'success');
+                    $('#contact-form')[0].reset();
+                })
+                .catch((error) => {
+                    console.error('Error!', error.message);
+                    showNotification('Terjadi kesalahan, pesan tidak terkirim.', 'error');
+                })
+                .finally(() => {
+                    $('#submit-btn-contact').prop('disabled', false).text('Kirim Pesan');
+                });
             });
         });
         
