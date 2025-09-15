@@ -70,7 +70,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, messages, isLoading,
             {/* Header */}
             <header className="flex items-center justify-between p-4 border-b border-muted/50 dark:border-gray-700 flex-shrink-0">
                 <div className="text-left">
-                    <h2 className="font-serif text-xl text-foreground dark:text-background">AI Assistant</h2>
+                    <h2 className="font-serif text-2xl text-foreground dark:text-background">AI Assistant</h2>
                     <p className="text-sm text-muted dark:text-gray-400">Ask about Reykal</p>
                 </div>
                 <div className="flex items-center space-x-2">
