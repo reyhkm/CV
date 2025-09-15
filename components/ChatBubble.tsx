@@ -8,8 +8,8 @@ interface ChatBubbleProps {
 const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
     const isUser = message.role === 'user';
     const bubbleClasses = isUser
-        ? 'bg-foreground text-background self-end'
-        : 'bg-gray-200 text-foreground self-start';
+        ? 'bg-foreground text-background self-end dark:bg-background dark:text-foreground'
+        : 'bg-gray-200 text-foreground self-start dark:bg-[#262626] dark:text-gray-200';
     const containerClasses = isUser ? 'justify-end' : 'justify-start';
 
     return (
