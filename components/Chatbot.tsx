@@ -7,7 +7,6 @@ import ChatBubble from './ChatBubble';
 interface ChatbotProps {
     isOpen: boolean;
     onClose: () => void;
-    onAnimationEnd: () => void;
     messages: Message[];
     isLoading: boolean;
     onSendMessage: (message: string) => void;
@@ -22,10 +21,9 @@ const ThinkingIndicator: React.FC = () => (
 );
 
 
-const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onAnimationEnd, messages, isLoading, onSendMessage }) => {
+const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, messages, isLoading, onSendMessage }) => {
     const [input, setInput] = useState('');
     const [isMaximized, setIsMaximized] = useState(false);
-    const [animation, setAnimation] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const chatbotRef = useRef<HTMLDivElement>(null);
 
@@ -37,13 +35,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onAnimationEnd, mess
         scrollToBottom();
     }, [messages, isLoading]);
 
-    // Manage animations based on isOpen prop
+    // Reset to minimized view when closing
     useEffect(() => {
-        if (isOpen) {
-            setIsMaximized(false); // Always open in minimized state
-            setAnimation('animate-slideInUp');
-        } else if (chatbotRef.current) { // Only set closing animation if component is rendered
-            setAnimation(isMaximized ? 'animate-modalFadeOut' : 'animate-slideOutDown');
+        if (!isOpen) {
+            setIsMaximized(false);
         }
     }, [isOpen]);
 
@@ -53,31 +48,24 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, onAnimationEnd, mess
         setInput('');
     };
     
-    const handleAnimationEnd = (e: React.AnimationEvent<HTMLDivElement>) => {
-        if (e.target === chatbotRef.current) {
-            // After opening animation, remove it to allow CSS transitions to work
-            if (isOpen) {
-                setAnimation('');
-            }
-            onAnimationEnd();
-        }
-    };
-
     const toggleMaximize = () => {
         setIsMaximized(prev => !prev);
     };
 
-    const containerClasses = `fixed z-[999] flex flex-col bg-background/95 backdrop-blur-sm transition-all duration-300 ease-in-out overflow-hidden ${
+    const containerClasses = `fixed z-[999] flex flex-col bg-background/95 backdrop-blur-sm transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
         isMaximized 
         ? 'inset-0 rounded-none' 
         : 'bottom-4 right-4 md:bottom-8 md:right-8 w-[calc(100%-2rem)] md:w-[400px] h-[70vh] md:h-[600px] rounded-2xl shadow-2xl border border-muted/20'
-    } ${animation}`;
+    } ${
+        isOpen
+        ? 'opacity-100 translate-y-0 visible'
+        : 'opacity-0 translate-y-5 invisible'
+    }`;
 
     return (
         <div 
           ref={chatbotRef}
           className={containerClasses}
-          onAnimationEnd={handleAnimationEnd}
         >
             {/* Header */}
             <header className="flex items-center justify-between p-4 border-b border-muted/50 flex-shrink-0">
