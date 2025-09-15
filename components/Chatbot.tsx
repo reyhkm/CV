@@ -100,7 +100,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, messages, isLoading,
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Ask about a project, skill, or experience..."
-                        className="flex-1 w-full bg-transparent border-none focus:ring-0 text-foreground dark:text-background placeholder-muted dark:placeholder-gray-500 text-lg p-2"
+                        className="flex-1 w-full bg-transparent border-none focus:ring-0 text-foreground dark:text-background placeholder-muted dark:placeholder-gray-500 text-sm p-2"
                         disabled={isLoading}
                         aria-label="Chat input"
                     />
