@@ -52,10 +52,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, messages, isLoading,
         setIsMaximized(prev => !prev);
     };
 
-    const containerClasses = `fixed z-[999] flex flex-col bg-background/95 backdrop-blur-sm transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
+    const containerClasses = `fixed z-[999] flex flex-col bg-background/95 dark:bg-foreground/90 backdrop-blur-sm transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
         isMaximized 
         ? 'inset-0 rounded-none' 
-        : 'bottom-4 right-4 md:bottom-8 md:right-8 w-[calc(100%-2rem)] md:w-[400px] h-[70vh] md:h-[600px] rounded-2xl shadow-2xl border border-muted/20'
+        : 'bottom-4 right-4 md:bottom-8 md:right-8 w-[calc(100%-2rem)] md:w-[400px] h-[70vh] md:h-[600px] rounded-2xl shadow-2xl border border-muted/20 dark:border-gray-700'
     } ${
         isOpen
         ? 'opacity-100 translate-y-0 visible'
@@ -68,16 +68,16 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, messages, isLoading,
           className={containerClasses}
         >
             {/* Header */}
-            <header className="flex items-center justify-between p-4 border-b border-muted/50 flex-shrink-0">
+            <header className="flex items-center justify-between p-4 border-b border-muted/50 dark:border-gray-700 flex-shrink-0">
                 <div className="text-left">
-                    <h2 className="font-serif text-2xl text-foreground">AI Assistant</h2>
-                    <p className="text-sm text-muted">Ask about Reykal</p>
+                    <h2 className="font-serif text-2xl text-foreground dark:text-background">AI Assistant</h2>
+                    <p className="text-sm text-muted dark:text-gray-400">Ask about Reykal</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <button onClick={toggleMaximize} className="p-2 text-muted hover:text-foreground transition-colors" aria-label={isMaximized ? "Minimize chat" : "Maximize chat"}>
+                    <button onClick={toggleMaximize} className="p-2 text-muted dark:text-gray-400 hover:text-foreground dark:hover:text-background transition-colors" aria-label={isMaximized ? "Minimize chat" : "Maximize chat"}>
                         {isMaximized ? <MinimizeIcon className="w-5 h-5" /> : <MaximizeIcon className="w-5 h-5" />}
                     </button>
-                    <button onClick={onClose} className="p-2 text-muted hover:text-foreground transition-colors" aria-label="Close chat">
+                    <button onClick={onClose} className="p-2 text-muted dark:text-gray-400 hover:text-foreground dark:hover:text-background transition-colors" aria-label="Close chat">
                         <CloseIcon className="w-6 h-6" />
                     </button>
                 </div>
@@ -93,21 +93,21 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, messages, isLoading,
             </div>
 
             {/* Input Form */}
-            <div className="p-4 border-t border-muted/50">
+            <div className="p-4 border-t border-muted/50 dark:border-gray-700">
                 <form onSubmit={handleSubmit} className="flex items-center space-x-4">
                     <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Ask about a project, skill, or experience..."
-                        className="flex-1 w-full bg-transparent border-none focus:ring-0 text-foreground placeholder-muted text-lg p-2"
+                        className="flex-1 w-full bg-transparent border-none focus:ring-0 text-foreground dark:text-background placeholder-muted dark:placeholder-gray-500 text-lg p-2"
                         disabled={isLoading}
                         aria-label="Chat input"
                     />
                     <button
                         type="submit"
                         disabled={isLoading || !input.trim()}
-                        className="bg-foreground text-background p-3 rounded-full transition-all duration-300 disabled:bg-muted disabled:scale-100 hover:scale-110"
+                        className="bg-foreground text-background dark:bg-background dark:text-foreground p-3 rounded-full transition-all duration-300 disabled:opacity-50 disabled:scale-100 hover:scale-110"
                         aria-label="Send message"
                     >
                         <SendIcon className="w-5 h-5" />
