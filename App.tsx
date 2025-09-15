@@ -60,7 +60,7 @@ const App: React.FC = () => {
             {!isRendered && (
                 <button
                     onClick={toggleChat}
-                    className="fixed bottom-8 right-8 bg-foreground text-background w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-foreground z-[1000] animate-fadeIn"
+                    className="fixed bottom-8 right-8 bg-foreground text-background w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-foreground z-[1000] animate-fabIn"
                     aria-label="Open AI Assistant"
                 >
                     <BotIcon className="w-8 h-8" />
