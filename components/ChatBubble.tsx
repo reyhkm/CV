@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { memo } from 'react';
 import type { Message } from '../types';
 
 interface ChatBubbleProps {
@@ -22,4 +21,4 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
     );
 };
 
-export default ChatBubble;
+export default memo(ChatBubble);
