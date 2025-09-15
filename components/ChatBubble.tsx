@@ -24,5 +24,5 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
         </div>
     );
 };
-
+//hai
 export default memo(ChatBubble);
