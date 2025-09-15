@@ -1,4 +1,6 @@
 import React, { memo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import type { Message } from '../types';
 
 interface ChatBubbleProps {
@@ -14,8 +16,10 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
 
     return (
         <div className={`w-full flex ${containerClasses} animate-fadeIn`}>
-            <div className={`max-w-md lg:max-w-lg xl:max-w-2xl rounded-2xl p-4 leading-relaxed text-sm ${bubbleClasses}`}>
-                <p>{message.text}</p>
+            <div className={`markdown-content max-w-md lg:max-w-lg xl:max-w-2xl rounded-2xl p-4 leading-relaxed text-sm ${bubbleClasses}`}>
+                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {message.text}
+                </ReactMarkdown>
             </div>
         </div>
     );
