@@ -107,7 +107,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, messages, isLoading,
                     <button
                         type="submit"
                         disabled={isLoading || !input.trim()}
-                        className="bg-foreground text-background dark:bg-background dark:text-foreground p-3 rounded-full transition-all duration-300 disabled:opacity-50 disabled:scale-100 hover:scale-110"
+                        className="p-2 text-foreground dark:text-background transition-all duration-300 disabled:opacity-50 disabled:scale-100 enabled:hover:scale-110"
                         aria-label="Send message"
                     >
                         <SendIcon className="w-5 h-5" />
