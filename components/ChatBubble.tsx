@@ -14,7 +14,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
 
     return (
         <div className={`w-full flex ${containerClasses} animate-fadeIn`}>
-            <div className={`max-w-md lg:max-w-lg xl:max-w-2xl rounded-2xl p-4 leading-relaxed ${bubbleClasses}`}>
+            <div className={`max-w-md lg:max-w-lg xl:max-w-2xl rounded-2xl p-4 leading-relaxed text-sm ${bubbleClasses}`}>
                 <p>{message.text}</p>
             </div>
         </div>
