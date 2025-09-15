@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>REYKAL —</title>
+    <title>REYKAL — An AI Editorial</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -31,17 +31,28 @@
                         sans: ['Inter', 'sans-serif']
                     },
                     keyframes: {
-                        fadeIn: {
-                          '0%': { opacity: '0', transform: 'scale(0.95)' },
+                        // For the floating action button
+                        fabIn: {
+                          '0%': { opacity: '0', transform: 'scale(0.9)' },
                           '100%': { opacity: '1', transform: 'scale(1)' },
                         },
-                        fadeOut: {
-                          '0%': { opacity: '1', transform: 'scale(1)' },
-                          '100%': { opacity: '0', transform: 'scale(0.95)' },
+                        // For fullscreen chat modal
+                        modalFadeIn: {
+                          '0%': { opacity: '0' },
+                          '100%': { opacity: '1' },
                         },
-                        slideIn: {
-                          '0%': { transform: 'translateY(100%)' },
-                          '100%': { transform: 'translateY(0)' },
+                        modalFadeOut: {
+                          '0%': { opacity: '1' },
+                          '100%': { opacity: '0' },
+                        },
+                        // For minimized chat widget
+                        slideInUp: {
+                          '0%': { transform: 'translateY(20px)', opacity: '0' },
+                          '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideOutDown: {
+                          '0%': { transform: 'translateY(0)', opacity: '1' },
+                          '100%': { transform: 'translateY(20px)', opacity: '0' },
                         },
                         thinking: {
                           '0%, 100%': { transform: 'scale(1)', opacity: '0.5' },
@@ -49,9 +60,11 @@
                         }
                     },
                     animation: {
-                        fadeIn: 'fadeIn 0.3s ease-out forwards',
-                        fadeOut: 'fadeOut 0.3s ease-in forwards',
-                        slideIn: 'slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        fabIn: 'fabIn 0.3s ease-out forwards',
+                        modalFadeIn: 'modalFadeIn 0.3s ease-out forwards',
+                        modalFadeOut: 'modalFadeOut 0.2s ease-in forwards',
+                        slideInUp: 'slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        slideOutDown: 'slideOutDown 0.3s ease-in forwards',
                         thinking: 'thinking 1.2s infinite ease-in-out',
                     }
                 }
@@ -242,7 +255,7 @@
             <div class="container mx-auto px-4 text-center">
                 <h1 class="section-heading">
                     <div class="animate-mask"><span class="inline-block">REY</span></div>
-                    <div class="animate-mask" style="transition-delay: 0.1s;"><span class="inline-block">KAL</span></div>
+                    <div class="animate-mask" style="transition-delay: 0.1s;"><span class="inline-block">-KAL</span></div>
                 </h1>
                 <div class="animate-mask" style="transition-delay: 0.2s;">
                     <p class="mt-4 text-muted max-w-lg mx-auto">
